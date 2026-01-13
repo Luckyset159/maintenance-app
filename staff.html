@@ -5,62 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Portal | Cinqo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f4f6f9; padding-bottom: 70px; }
-        .header { background: #000; color: #fff; padding: 20px; border-radius: 0 0 20px 20px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .job-card { background: #fff; border-radius: 16px; border: none; border-left: 6px solid #ffc107; margin-bottom: 15px; transition: 0.2s; cursor: pointer; }
-        .job-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.05); }
-        .req-tag { background: #e9ecef; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; color: #495057; }
-        .img-detail { width: 100%; border-radius: 12px; margin-top: 10px; border: 1px solid #eee; }
-        .footer-bar { position: fixed; bottom: 0; width: 100%; background: #fff; border-top: 1px solid #eee; padding: 10px; font-size: 0.8rem; text-align: center; }
-        .modal-content { border-radius: 20px; border: none; }
-        .btn-success { border-radius: 10px; padding: 12px; font-weight: 600; }
+        body { background-color: #f4f6f9; padding-bottom: 70px; font-family: 'Segoe UI', sans-serif; }
+        .header { background: #000; color: #fff; padding: 20px; border-radius: 0 0 20px 20px; margin-bottom: 20px; }
+        .job-card { background: #fff; border-radius: 12px; border-left: 6px solid #ffc107; margin-bottom: 12px; cursor: pointer; border-top:none; border-right:none; border-bottom:none; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .img-detail { width: 100%; border-radius: 10px; margin-top: 10px; border: 1px solid #eee; }
+        .footer-bar { position: fixed; bottom: 0; width: 100%; background: #fff; border-top: 1px solid #eee; padding: 10px; text-align: center; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-<div class="header text-center">
-    <h4 class="mb-0">Staff Pending List</h4>
-    <small class="opacity-75">Maintenance Operations</small>
-</div>
+<div class="header text-center"><h3>PENDING TASKS</h3></div>
 
 <div class="container">
-    <div id="jobList">
-        <div class="text-center py-5">
-            <div class="spinner-border text-dark" role="status"></div>
-            <p class="mt-2">Fetching jobs...</p>
-        </div>
-    </div>
+    <div id="jobList"><div class="text-center py-5"><div class="spinner-border"></div></div></div>
 </div>
 
 <div class="footer-bar" id="ts">Last Refreshed: --:--</div>
 
 <div class="modal fade" id="jobModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content p-2">
-            <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold">Job <span id="mId"></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <label class="text-muted small fw-bold">LOCATION</label>
-                <p class="mb-3"><b id="mLoc"></b></p>
-                <label class="text-muted small fw-bold">ISSUE</label>
-                <p class="mb-3" id="mIssue"></p>
-                <div id="mImgs"></div>
-                <hr>
-                <label class="form-label fw-bold">Work Notes / Action Taken</label>
-                <textarea id="notes" class="form-control mb-3" rows="3" placeholder="What did you do to fix it?"></textarea>
-                <button class="btn btn-success w-100" id="doneBtn" onclick="save()">Complete & Close Task</button>
-            </div>
-        </div>
-    </div>
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-body">
+        <h5 class="fw-bold mb-3">Job <span id="mId"></span></h5>
+        <p class="mb-1 small text-muted">LOCATION</p>
+        <p class="fw-bold" id="mLoc"></p>
+        <p class="mb-1 small text-muted">ISSUE</p>
+        <p id="mIssue"></p>
+        <div id="mImgs"></div>
+        <hr>
+        <label class="form-label fw-bold">Work Notes</label>
+        <textarea id="notes" class="form-control mb-3" rows="3" placeholder="Explain the fix..."></textarea>
+        <button class="btn btn-success w-100 fw-bold" id="doneBtn" onclick="save()">MARK AS COMPLETED</button>
+    </div></div></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbye6jmWue-b9fGGPtiboJxa4m-2mNh9dRJ0BkvLTITOGOb0MCjGlDiXps4wQzNlRh6M/exec"; // PASTE YOUR URL HERE
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxkESJLWT0KW7RHOV_CXbkK1dJWOh9_IeR9UDpqiBwEbZZpyvq_njAf0fL6NSR1YZ05/exec"; 
     let activeId = null;
     const modal = new bootstrap.Modal(document.getElementById('jobModal'));
 
@@ -72,62 +52,48 @@
             list.innerHTML = '';
             document.getElementById('ts').innerText = "Last Refreshed: " + new Date().toLocaleTimeString();
 
-            if (jobs.length === 0) {
-                list.innerHTML = '<div class="alert alert-light text-center border-0">No pending jobs. Great work!</div>';
-                return;
-            }
+            if (jobs.length === 0) { list.innerHTML = '<div class="text-center mt-5">No pending jobs!</div>'; return; }
 
             jobs.forEach(j => {
                 const div = document.createElement('div');
                 div.className = 'card job-card p-3';
                 div.onclick = () => show(j);
-                div.innerHTML = `
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="req-tag">REQ #${j.reqNo}</span>
-                        <span class="small text-muted">${j.date}</span>
-                    </div>
-                    <div class="fw-bold">${j.area}</div>
-                    <div class="small text-muted text-truncate">${j.issue}</div>
-                `;
+                div.innerHTML = `<div class="d-flex justify-content-between"><b>#${j.reqNo}</b><small>${j.date}</small></div><div>${j.area} - ${j.subarea}</div>`;
                 list.appendChild(div);
             });
-        } catch (e) { alert("Load failed."); }
+        } catch (e) { console.log(e); }
     }
 
     function show(j) {
         activeId = j.reqNo;
-        document.getElementById('mId').innerText = "#" + j.reqNo;
-        document.getElementById('mLoc').innerText = j.area + " (" + j.subarea + ")";
+        document.getElementById('mId').innerText = j.reqNo;
+        document.getElementById('mLoc').innerText = j.area + " / " + j.subarea;
         document.getElementById('mIssue').innerText = j.issue;
-        document.getElementById('notes').value = '';
         const imgDiv = document.getElementById('mImgs');
         imgDiv.innerHTML = '';
         [j.pic1, j.pic2, j.pic3].forEach(url => {
-            if (url) {
-                const i = document.createElement('img');
-                i.src = url; i.className = 'img-detail';
-                i.onerror = () => i.style.display='none';
-                imgDiv.appendChild(i);
-            }
+            if (url && url !== "No Image") { const i = document.createElement('img'); i.src = url; i.className = 'img-detail'; imgDiv.appendChild(i); }
         });
         modal.show();
     }
 
     async function save() {
-        const workNotes = document.getElementById('notes').value;
-        if (!workNotes) return alert("Enter notes!");
-        
+        const notes = document.getElementById('notes').value;
+        if (!notes) return alert("Please enter notes!");
         const btn = document.getElementById('doneBtn');
         btn.disabled = true; btn.innerText = "Saving...";
 
+        // BYPASS CORS
         await fetch(WEB_APP_URL, {
             method: 'POST',
-            body: JSON.stringify({ action: 'markDone', reqNo: activeId, workNotes })
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ action: 'markDone', reqNo: activeId, workNotes: notes })
         });
 
         modal.hide();
-        btn.disabled = false; btn.innerText = "Complete & Close Task";
-        load();
+        btn.disabled = false; btn.innerText = "MARK AS COMPLETED";
+        setTimeout(load, 1500); // Give Google time to update
     }
 
     window.onload = load;
