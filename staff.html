@@ -47,14 +47,21 @@
 <div class="modal fade" id="jobModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="back-btn" id="backBtn" aria-label="Back to pending tasks">← Back</button>
-                <div class="text-center flex-grow-1">
-                    <div class="modal-title">Job #<span id="mId"></span></div>
-                    <div class="small text-muted" id="mLocHeader"></div>
-                </div>
-                <button type="button" class="btn-close" aria-label="Close" id="xCloseBtn"></button>
-            </div>
+          <div class="modal-header align-items-start">
+              <button type="button" class="back-btn" id="backBtn">← Back</button>
+
+              <div class="text-center flex-grow-1">
+                  <div class="modal-title">Job #<span id="mId"></span></div>
+                  <div class="small text-muted" id="mLocHeader"></div>
+              </div>
+
+              <div class="text-end me-2">
+                  <div class="small text-muted">Created</div>
+                  <div class="fw-bold small" id="mDate"></div>
+              </div>
+
+              <button type="button" class="btn-close" id="xCloseBtn"></button>
+          </div>
 
             <div class="modal-body pt-2">
                 <p class="small text-muted mb-1">LOCATION</p><p class="fw-bold" id="mLoc"></p>
@@ -79,10 +86,7 @@
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwsFCQG0g6cLqgSBWDuAA3B8QRV_SB9CNAXMsmzb1rAYlNan6gMP9h6F_PryXta2nl3/exec";
     const SECRET_PIN = "4321"; // Update your PIN here
 
-    const modal = new bootstrap.Modal(document.getElementById('jobModal'), {
-        backdrop: 'static',
-        keyboard: false
-    });
+    const modal = new bootstrap.Modal(document.getElementById('jobModal'));
     let activeId = null;
 
     // Wire up modal buttons (Done / Cancel / Back / Close)
@@ -135,6 +139,7 @@
 
     function show(j) {
         activeId = j.reqNo;
+        document.getElementById('mDate').innerText = j.date;
         document.getElementById('mId').innerText = j.reqNo;
         document.getElementById('mLoc').innerText = j.area + " / " + j.subarea;
         document.getElementById('mLocHeader').innerText = j.area + " / " + j.subarea;
